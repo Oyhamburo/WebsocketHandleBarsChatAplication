@@ -1,0 +1,336 @@
+<div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card chat-app">
+                <div class="chat">
+                    <div class="chat-header clearfix text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white rounded-t-lg">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
+                                </a>
+                                <div class="chat-about">
+                                    <h6 class="m-b-0">Cristian</h6>
+                                    <small></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-history text-xs text-gray-700 bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+                        <ul class="m-b-0" id="mensajes">
+                        </ul>
+                    </div>
+                    <form onsubmit="return enviarMensaje(this)">
+                        <label for="chat" class="sr-only">Your message</label>
+                        <div class="flex items-center py-2 px-3 bg-gray-50 rounded-b-lg dark:bg-gray-700">
+                            <button type="button"
+                                class="inline-flex justify-center p-2 text-gray-500 rounded-b-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Upload image</span>
+                            </button>
+                            <button type="button"
+                                class="p-2 text-gray-500 rounded-b-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Add emoji</span>
+                            </button>
+                            <input id="nombre"
+                                type="email"
+                                class="block mx-4 p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Your email..."></input>
+                            <input id="chat_mensaje" rows="1"
+                                class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Your message..."></input>
+                            <button type="submit" id="enviar_msj"
+                                class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                                <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+                                    </path>
+                                </svg>
+                                <span class="sr-only">Send message</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        
+        margin-top: 20px;
+    }
+
+    .card {
+        background: #fff;
+        transition: 0.5s;
+        border: 0;
+        margin-bottom: 30px;
+        border-radius: 0.55rem;
+        position: relative;
+        width: 100%;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+    }
+
+    .chat-app .people-list {
+        width: 280px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 20px;
+        z-index: 7;
+    }
+
+    .chat-app .chat {
+        border-left: 1px solid #eaeaea;
+    }
+
+    .people-list {
+        -moz-transition: 0.5s;
+        -o-transition: 0.5s;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+    }
+
+    .people-list .chat-list li {
+        padding: 10px 15px;
+        list-style: none;
+        border-radius: 3px;
+    }
+
+    .people-list .chat-list li:hover {
+        background: #efefef;
+        cursor: pointer;
+    }
+
+    .people-list .chat-list li.active {
+        background: #efefef;
+    }
+
+    .people-list .chat-list li .name {
+        font-size: 15px;
+    }
+
+    .people-list .chat-list img {
+        width: 45px;
+        border-radius: 50%;
+    }
+
+    .people-list img {
+        float: left;
+        border-radius: 50%;
+    }
+
+    .people-list .about {
+        float: left;
+        padding-left: 8px;
+    }
+
+    .people-list .status {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .chat .chat-header {
+        padding: 15px 20px;
+        border-bottom: 2px solid #f4f7f6;
+    }
+
+    .chat .chat-header img {
+        float: left;
+        border-radius: 40px;
+        width: 40px;
+    }
+
+    .chat .chat-header .chat-about {
+        float: left;
+        padding-left: 10px;
+    }
+
+    .chat .chat-history {
+        padding: 20px;
+        border-bottom: 2px solid #fff;
+    }
+
+    .chat .chat-history ul {
+        padding: 0;
+    }
+
+    .chat .chat-history ul li {
+        list-style: none;
+        margin-bottom: 30px;
+    }
+
+    .chat .chat-history ul li:last-child {
+        margin-bottom: 0px;
+    }
+
+    .chat .chat-history .message-data {
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .chat .chat-history .message-data img {
+        border-radius: 40px;
+        width: 40px;
+    }
+
+    .chat .chat-history .message-data-time {        
+        padding-left: 6px;
+    }
+
+    .chat .chat-history .message {
+        color: #444;
+        padding: 6px 20px;
+        line-height: 26px;
+        font-size: 16px;
+        border-radius: 7px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .chat .chat-history .message:after {
+        bottom: 100%;
+        left: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #fff;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+
+    .chat .chat-history .my-message {
+        background: #efefef;
+    }
+
+    .chat .chat-history .my-message:after {
+        bottom: 100%;
+        left: 30px;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #efefef;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+
+    .chat .chat-history .other-message {
+        background: #e8f1f3;
+        text-align: right;
+    }
+
+    .chat .chat-history .other-message:after {
+        border-bottom-color: #e8f1f3;
+        left: 93%;
+    }
+
+    .chat .chat-message {
+        padding: 20px;
+    }
+
+    .online,
+    .offline,
+    .me {
+        margin-right: 2px;
+        font-size: 8px;
+        vertical-align: middle;
+    }
+
+    .online {
+        color: #86c541;
+    }
+
+    .offline {
+        color: #e47297;
+    }
+
+    .me {
+        color: #1d8ecd;
+    }
+
+    .float-right {
+        float: right;
+    }
+
+    .clearfix:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+
+    @media only screen and (max-width: 767px) {
+        .chat-app .people-list {
+            height: 465px;
+            width: 100%;
+            overflow-x: auto;
+            background: #fff;
+            left: -400px;
+            display: none;
+        }
+
+        .chat-app .people-list.open {
+            left: 0;
+        }
+
+        .chat-app .chat {
+            margin: 0;
+        }
+
+        .chat-app .chat .chat-header {
+            border-radius: 0.55rem 0.55rem 0 0;
+        }
+
+        .chat-app .chat-history {
+            height: 300px;
+            overflow-x: auto;
+        }
+    }
+
+    @media only screen and (min-width: 768px) and (max-width: 992px) {
+        .chat-app .chat-list {
+            height: 650px;
+            overflow-x: auto;
+        }
+
+        .chat-app .chat-history {
+            height: 600px;
+            overflow-x: auto;
+        }
+    }
+
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
+        .chat-app .chat-list {
+            height: 480px;
+            overflow-x: auto;
+        }
+
+        .chat-app .chat-history {
+            height: calc(100vh - 350px);
+            overflow-x: auto;
+        }
+    }
+</style>

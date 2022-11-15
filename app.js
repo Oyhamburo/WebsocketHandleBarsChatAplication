@@ -1,16 +1,31 @@
-const express = require('express')
-const handlebars = require('express-handlebars')
-//servidor express
+import express from 'express';
+import handlebars from 'express-handlebars';
+import path from 'path';
+import {fileURLToPath} from 'url';
+
+
+//KNEX 
+import knex from 'knex';
+//SQLITE3
+import sqliteConfig from './sqliteConfig.js';
+const Knex = knex(sqliteConfig)
+
+import BaseDeDatos from './funciones.js';
+
+//MARIADB
+import connection from './mysql/db.js';
+const DB = new BaseDeDatos(connection, 'productos')
+// import DB from "./funciones.js";
+// const db = new DB("./data/productos.json")
+
 const app = express();
-const DB = require("./funciones")
-const db = new DB("./data/productos.json")
-//const productosRouter = require('./routes/productos')
-//variable para escribir en archivo
-var fs = require('fs');
 
-const {Server: HTTPServer} = require ('http')
-const {Server: SocketServer } = require ('socket.io')
+// import fs from 'fs';
+import {Server as HTTPServer} from 'http';
+import {Server as SocketServer } from 'socket.io';
 
+const filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(filename); 
 const httpServer = new HTTPServer(app)
 
 const io = new SocketServer (httpServer)
@@ -34,34 +49,74 @@ app.set('views','./views');
 app.set('view engine', 'hbs')
 
 
+// GET PARA TRAER PRODUCTO POR ID DE MARIADB
+app.get('/productos/:id', async (req, res) => {
+    const {id} = req.params
+    const productos = await DB.getById(id);
+    res.send(productos);
+})
 
 app.get("/",async (req,res) => {
-    res.render("index", {layout:"main",productos:await db.getAll()})
+    res.render("index", {layout:"main",productos:await DB.getAll()})
 })
 
 io.on('connection', async (socket) =>{
-    console.log(`conectado: ${socket.id}`);
+    console.log(`conectado: ${socket.id}`);    
+    
+    socket.emit("productos", await DB.getAll())
 
-    socket.emit('mensajes', Mensajes)
-    socket.emit("productos", await db.getAll())
-
+    
 /* ESCUCHO LOS MENSAJES NUEVOS EN EL BACK */
     socket.on('new_msg', (data) =>{
         console.log(data);
-        Mensajes.push(data);
-
         // Escribo en archivo .txt el mensaje
-        fs.writeFile('message.txt', JSON.stringify(Mensajes), function() {
-            console.log('Archivo Grabado!');
-        });
-        io.sockets.emit('mensajes', Mensajes)
+        // fs.writeFile('message.txt', JSON.stringify(Mensajes), function() {
+        //     console.log('Archivo Grabado!');
+        // });
+
+        // ESCRIBO EN BD SQLITE
+        Knex("msgs")
+            .insert(data)
+            .then(()=> {
+                console.log(data);
+            })
+            .catch((e)=>{
+                console.log(e);
+            })
+
+
+        
 // CONSTANTE SOCKET USUARIO ESPECIFICO
 // IO.SOCKETS TODOS LOS USUARIOS CONECTADOS AL SOCKET
+        Knex.from("msgs").select('*')
+            .then(rows => {
+                io.sockets.emit('mensajes', rows)
+                console.table(rows)
+            })
+            .catch((e) => {
+                console.log(e);
+            })
     })
     socket.on("new_producto",async (prod)=>{
-        await db.save(prod)
+        console.log(prod);
+        await DB.save(prod)
 
-        const productos = await db.getAll()
+        const productos = await DB.getAll()
+        io.sockets.emit("productos",productos)
+    })
+
+    socket.on("remove_producto",async (id)=>{
+        console.log(id);
+        await DB.deleteById(id)
+
+        const productos = await DB.getAll()
+        io.sockets.emit("productos",productos)
+    })
+
+    socket.on("modify_producto",async (prod)=>{        
+        await DB.updateById(prod)        
+        console.log(prod);
+        const productos = await DB.getAll()
         io.sockets.emit("productos",productos)
     })
 })
